@@ -2,19 +2,14 @@ import * as fs from 'fs';
 import {indexdts} from '../index';
 import watchers from '../watchers'
 
-export class InterfaceClass {
+export class TypeClass {
   constructor() { }
 
-  public writeInterface(ArrayFile: string[], index: number) {
+  public writeType(ArrayFile: string[], index: number) {
     let finalFile: string = '';
-    let bracketCounter: number = 0;
     for (var i: number = index; i < ArrayFile.length; i++) {
-      finalFile += ArrayFile[i] + '\n';
-      if (ArrayFile[i].trim().includes(':{'))
-        bracketCounter++;
-      if (ArrayFile[i].trim() === '}' && bracketCounter > 0)
-        bracketCounter--;
-      else if (ArrayFile[i] === '}')
+      finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
+      if (ArrayFile[i].trim() === '}')
         break;
     }
     // console.log(finalFile);

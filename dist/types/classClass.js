@@ -21,6 +21,11 @@ class ClassClass {
             if (ArrayFile[i].includes('export class')) { // If Class
                 finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
             }
+            else if (ArrayFile[i].includes('export abstract ')) { // If Class Abstract
+                finalFile += ArrayFile[i].replace('export abstract ', 'export declare abstract ') + '\n';
+            }
+            if (ArrayFile[i].includes('extends '))
+                finalFile += '//TODO: Add the var from the other class \n';
             if (ArrayFile[i].includes('public ')
                 && ArrayFile[i].includes(':')
                 && ArrayFile[i].includes(';')

@@ -11,6 +11,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(require("fs"));
+const readline = __importStar(require("readline"));
 const glob = __importStar(require("glob"));
 // Import Watchers
 const watchers_1 = __importDefault(require("./watchers"));
@@ -20,23 +22,34 @@ exports.indexdts = '/home/stalk/Projets/Node/indexBuilder/test.ts';
 exports.path = "/home/stalk/Projets/Node/fcom-zoho/src";
 class Main {
     constructor() {
-        console.log('[Index Live Builder Active] - Waiting for file changements...');
-        this._glob = new glob.Glob(exports.path + "/**/**/*.ts", { ignore: exports.path + '/*.d.ts' }, (err, files) => {
-            return this._getFiles(files);
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
         });
-    }
-    _getFiles(files) {
-        watchers_1.default.watchers(files);
+        this._glob = new glob.Glob(exports.path + "/**/**/*.ts", { ignore: exports.path + '/*.d.ts' }, (err, files) => {
+            this.files = files;
+        });
+        rl.question('What do you want to do ? [1] - Watch for changements | [2] - Generate in one shot : ', (answer) => {
+            switch (answer) {
+                case '1':
+                    console.log('[Index Live Builder Active] - Waiting for file changements...');
+                    watchers_1.default.watchers(this.files);
+                    break;
+                case '2':
+                    console.log('[Index Live Builder Active] - Generating the file d.ts in one shot...');
+                    fs.truncate('/home/stalk/Projets/Node/indexBuilder/test.ts', 0, function () { console.log('done'); });
+                    watchers_1.default.generator(this.files)
+                        .then(() => {
+                        console.log('[Index Live Builder Active] - Done');
+                        process.exit(0);
+                    });
+                    break;
+                default:
+                    console.log('[Index Live Builder Active] - Wrong choice, exiting...');
+            }
+            rl.close();
+        });
     }
 }
 new Main();
-//
-// filesWithDirectory = walkSync('./src');
-//
-// filesWithDirectory.forEach((pathFile) => {
-//   fs.watchFile(pathFile, (curr, prev) => {
-//     console.log(pathFile + ' file has been changed');
-//     analyzeFileBeingModified(pathFile);
-//   });
-// });
 //# sourceMappingURL=index.js.map

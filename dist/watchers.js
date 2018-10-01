@@ -12,6 +12,8 @@ const readline = __importStar(require("readline"));
 const interfaceClass_1 = require("./types/interfaceClass");
 const classClass_1 = require("./types/classClass");
 const enumClass_1 = require("./types/enumClass");
+const typeClass_1 = require("./types/typeClass");
+const constClass_1 = require("./types/constClass");
 class Watchers {
     constructor() {
         this._dtsFile = '';
@@ -21,6 +23,14 @@ class Watchers {
         fileList.forEach((pathFile) => {
             fs.watchFile(pathFile, (curr, prev) => {
                 console.log(pathFile + ' file has been changed - Building the d.ts ...');
+                return this._readFile(pathFile);
+            });
+        });
+    }
+    generator(fileList) {
+        return new Promise(() => {
+            fileList.forEach((pathFile) => {
+                console.log(pathFile + ' - Building the d.ts ...');
                 return this._readFile(pathFile);
             });
         });
@@ -46,9 +56,21 @@ class Watchers {
                 if (!this._checkIfLineExist(line, 'class'))
                     new classClass_1.ClassClass().writeClass(fileInArray, index);
             }
+            else if (line.includes('export abstract class')) {
+                if (!this._checkIfLineExist(line, 'class'))
+                    new classClass_1.ClassClass().writeClass(fileInArray, index);
+            }
             else if (line.includes('export enum')) {
                 if (!this._checkIfLineExist(line, 'enum'))
                     new enumClass_1.EnumClass().writeEnum(fileInArray, index);
+            }
+            else if (line.includes('export type')) {
+                if (!this._checkIfLineExist(line, 'type'))
+                    new typeClass_1.TypeClass().writeType(fileInArray, index);
+            }
+            else if (line.includes('export const')) {
+                if (!this._checkIfLineExist(line, 'const'))
+                    new constClass_1.ConstClass().writeConst(fileInArray, index);
             }
         });
     }
@@ -69,7 +91,13 @@ class Watchers {
             return this._dtsFile.includes(line);
         }
         else if (type === 'enum') {
-            return this._dtsFile.includes(line.replace('export ', 'export declare '));
+            return this._dtsFile.includes(line.replace('export enum ', 'export declare enum '));
+        }
+        else if (type === 'type') {
+            return this._dtsFile.includes(line.replace('export type ', 'export declare type '));
+        }
+        else if (type === 'const') {
+            return this._dtsFile.includes(line.replace('export const ', 'export declare const '));
         }
     }
 }

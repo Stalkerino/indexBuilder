@@ -12,18 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const watchers_1 = __importDefault(require("../watchers"));
-class InterfaceClass {
+class TypeClass {
     constructor() { }
-    writeInterface(ArrayFile, index) {
+    writeType(ArrayFile, index) {
         let finalFile = '';
-        let bracketCounter = 0;
         for (var i = index; i < ArrayFile.length; i++) {
-            finalFile += ArrayFile[i] + '\n';
-            if (ArrayFile[i].trim().includes(':{'))
-                bracketCounter++;
-            if (ArrayFile[i].trim() === '}' && bracketCounter > 0)
-                bracketCounter--;
-            else if (ArrayFile[i] === '}')
+            finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
+            if (ArrayFile[i].trim() === '}')
                 break;
         }
         // console.log(finalFile);
@@ -35,5 +30,5 @@ class InterfaceClass {
         watchers_1.default.refreshDts(); // Refresh the variable of the d.ts file
     }
 }
-exports.InterfaceClass = InterfaceClass;
-//# sourceMappingURL=interfaceClass.js.map
+exports.TypeClass = TypeClass;
+//# sourceMappingURL=typeClass.js.map

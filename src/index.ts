@@ -18,28 +18,36 @@ class Main {
   private files: any;
 
   constructor() {
-    console.log('[Index Live Builder Active] - Waiting for file changements...');
-    this._glob = new glob.Glob(path + "/**/**/*.ts", {ignore: path + '/*.d.ts'}, (err, files) => {
-      return this._getFiles(files)
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
     });
-  }
+    this._glob = new glob.Glob(path + "/**/**/*.ts", {ignore: path + '/*.d.ts'}, (err, files) => {
+      this.files = files;
+    });
+    rl.question('What do you want to do ? [1] - Watch for changements | [2] - Generate in one shot : ', (answer) => {
+      switch (answer) {
+        case '1':
+          console.log('[Index Live Builder Active] - Waiting for file changements...');
+          Watchers.watchers(this.files);
+          break;
+        case '2':
+          console.log('[Index Live Builder Active] - Generating the file d.ts in one shot...');
+          fs.truncate('/home/stalk/Projets/Node/indexBuilder/test.ts', 0, function(){console.log('done')});
+          Watchers.generator(this.files)
+            .then(() => {
+              console.log('[Index Live Builder Active] - Done');
+              process.exit(0);
+            });
+          break;
+        default:
+          console.log('[Index Live Builder Active] - Wrong choice, exiting...');
+      }
 
-  private _getFiles(files: string[]) {
-    Watchers.watchers(files);
+      rl.close();
+    });
   }
 
 }
 
 new Main();
-
-
-
-//
-// filesWithDirectory = walkSync('./src');
-//
-// filesWithDirectory.forEach((pathFile) => {
-//   fs.watchFile(pathFile, (curr, prev) => {
-//     console.log(pathFile + ' file has been changed');
-//     analyzeFileBeingModified(pathFile);
-//   });
-// });
