@@ -2,14 +2,23 @@ import * as fs from 'fs';
 import * as readline from 'readline';
 
 import {InterfaceClass} from "./types/interfaceClass";
+import {ClassClass} from "./types/classClass";
+import {EnumClass} from "./types/enumClass";
+import {indexdts} from './index';
 
 export class Watchers {
-  constructor() {}
+
+  private _dtsFile: string;
+
+  constructor() {
+    this._dtsFile = '';
+    this.refreshDts();
+  }
 
   public watchers(fileList: string[]) {
     fileList.forEach((pathFile: string) => {
       fs.watchFile(pathFile, (curr, prev) => {
-        console.log(pathFile + ' file has been changed');
+        console.log(pathFile + ' file has been changed - Building the d.ts ...');
         return this._readFile(pathFile);
       });
     });
@@ -31,13 +40,38 @@ export class Watchers {
   private _checkType(fileInArray: string[]) {
     fileInArray.forEach((line, index) => {
       if (line.includes('export interface')) {
-        new InterfaceClass().writeInterface(fileInArray, index);
+        if (!this._checkIfLineExist(line, 'interface'))
+          new InterfaceClass().writeInterface(fileInArray, index);
       } else if (line.includes('export class')) {
-        console.log('The line : ' + line + ' is a class');
+        if (!this._checkIfLineExist(line, 'class'))
+          new ClassClass().writeClass(fileInArray, index);
       } else if (line.includes('export enum')) {
-        console.log('The line : ' + line + ' is an enum');
+        if (!this._checkIfLineExist(line, 'enum'))
+          new EnumClass().writeEnum(fileInArray, index);
       }
     });
   }
 
+  public refreshDts() {
+    this._dtsFile = '';
+    let reader = readline.createInterface({
+      input: fs.createReadStream('/home/stalk/Projets/Node/indexBuilder/test.ts')
+    });
+    reader.on('line', (currentLine) => {
+      this._dtsFile += currentLine;
+    });
+  }
+
+  private _checkIfLineExist(line: string, type: string) {
+    if (type === 'class') {
+      return this._dtsFile.includes(line.replace('export ', 'export declare '));
+    } else if (type === 'interface') {
+      return this._dtsFile.includes(line);
+    } else if (type === 'enum') {
+      return this._dtsFile.includes(line.replace('export ', 'export declare '));
+    }
+  }
+
 }
+
+export default new Watchers();

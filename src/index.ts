@@ -5,26 +5,27 @@ import * as readline from 'readline';
 import * as glob from 'glob';
 
 // Import Watchers
-import {Watchers} from "./watchers";
+import Watchers from "./watchers";
 
 // Path to the Index.d.ts to write
-const indexdts = './src/index.d.ts';
+export const indexdts: string = '/home/stalk/Projets/Node/indexBuilder/test.ts';
 
 // Path to the src Folder
-const path = "/home/stalk/Projets/Node/fcom-zoho/src";
+export const path = "/home/stalk/Projets/Node/fcom-zoho/src";
 
 class Main {
   private _glob: any;
   private files: any;
 
   constructor() {
+    console.log('[Index Live Builder Active] - Waiting for file changements...');
     this._glob = new glob.Glob(path + "/**/**/*.ts", {ignore: path + '/*.d.ts'}, (err, files) => {
       return this._getFiles(files)
     });
   }
 
   private _getFiles(files: string[]) {
-    new Watchers().watchers(files);
+    Watchers.watchers(files);
   }
 
 }

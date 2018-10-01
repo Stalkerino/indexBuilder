@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const watchers_1 = __importDefault(require("../watchers"));
-class InterfaceClass {
+class EnumClass {
     constructor() { }
-    writeInterface(ArrayFile, index) {
+    writeEnum(ArrayFile, index) {
         let finalFile = '';
         for (var i = index; i < ArrayFile.length; i++) {
-            finalFile += ArrayFile[i] + '\n';
+            finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
             if (ArrayFile[i].trim() === '}')
                 break;
         }
@@ -30,5 +30,5 @@ class InterfaceClass {
         watchers_1.default.refreshDts(); // Refresh the variable of the d.ts file
     }
 }
-exports.InterfaceClass = InterfaceClass;
-//# sourceMappingURL=interfaceClass.js.map
+exports.EnumClass = EnumClass;
+//# sourceMappingURL=enumClass.js.map

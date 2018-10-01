@@ -2,13 +2,13 @@ import * as fs from 'fs';
 import {indexdts} from '../index';
 import watchers from '../watchers'
 
-export class InterfaceClass {
+export class EnumClass {
   constructor() { }
 
-  public writeInterface(ArrayFile: string[], index: number) {
+  public writeEnum(ArrayFile: string[], index: number) {
     let finalFile: string = '';
     for (var i: number = index; i < ArrayFile.length; i++) {
-      finalFile += ArrayFile[i] + '\n';
+      finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
       if (ArrayFile[i].trim() === '}')
         break;
     }

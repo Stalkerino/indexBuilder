@@ -10,12 +10,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const readline = __importStar(require("readline"));
 const interfaceClass_1 = require("./types/interfaceClass");
+const classClass_1 = require("./types/classClass");
+const enumClass_1 = require("./types/enumClass");
 class Watchers {
-    constructor() { }
+    constructor() {
+        this._dtsFile = '';
+        this.refreshDts();
+    }
     watchers(fileList) {
         fileList.forEach((pathFile) => {
             fs.watchFile(pathFile, (curr, prev) => {
-                console.log(pathFile + ' file has been changed');
+                console.log(pathFile + ' file has been changed - Building the d.ts ...');
                 return this._readFile(pathFile);
             });
         });
@@ -34,16 +39,40 @@ class Watchers {
     _checkType(fileInArray) {
         fileInArray.forEach((line, index) => {
             if (line.includes('export interface')) {
-                new interfaceClass_1.InterfaceClass().writeInterface(fileInArray, index);
+                if (!this._checkIfLineExist(line, 'interface'))
+                    new interfaceClass_1.InterfaceClass().writeInterface(fileInArray, index);
             }
             else if (line.includes('export class')) {
-                console.log('The line : ' + line + ' is a class');
+                if (!this._checkIfLineExist(line, 'class'))
+                    new classClass_1.ClassClass().writeClass(fileInArray, index);
             }
             else if (line.includes('export enum')) {
-                console.log('The line : ' + line + ' is an enum');
+                if (!this._checkIfLineExist(line, 'enum'))
+                    new enumClass_1.EnumClass().writeEnum(fileInArray, index);
             }
         });
     }
+    refreshDts() {
+        this._dtsFile = '';
+        let reader = readline.createInterface({
+            input: fs.createReadStream('/home/stalk/Projets/Node/indexBuilder/test.ts')
+        });
+        reader.on('line', (currentLine) => {
+            this._dtsFile += currentLine;
+        });
+    }
+    _checkIfLineExist(line, type) {
+        if (type === 'class') {
+            return this._dtsFile.includes(line.replace('export ', 'export declare '));
+        }
+        else if (type === 'interface') {
+            return this._dtsFile.includes(line);
+        }
+        else if (type === 'enum') {
+            return this._dtsFile.includes(line.replace('export ', 'export declare '));
+        }
+    }
 }
 exports.Watchers = Watchers;
+exports.default = new Watchers();
 //# sourceMappingURL=watchers.js.map

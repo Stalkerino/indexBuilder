@@ -7,22 +7,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const glob = __importStar(require("glob"));
 // Import Watchers
-const watchers_1 = require("./watchers");
+const watchers_1 = __importDefault(require("./watchers"));
 // Path to the Index.d.ts to write
-const indexdts = './src/index.d.ts';
+exports.indexdts = '/home/stalk/Projets/Node/indexBuilder/test.ts';
 // Path to the src Folder
-const path = "/home/stalk/Projets/Node/fcom-zoho/src";
+exports.path = "/home/stalk/Projets/Node/fcom-zoho/src";
 class Main {
     constructor() {
-        this._glob = new glob.Glob(path + "/**/**/*.ts", { ignore: path + '/*.d.ts' }, (err, files) => {
+        console.log('[Index Live Builder Active] - Waiting for file changements...');
+        this._glob = new glob.Glob(exports.path + "/**/**/*.ts", { ignore: exports.path + '/*.d.ts' }, (err, files) => {
             return this._getFiles(files);
         });
     }
     _getFiles(files) {
-        new watchers_1.Watchers().watchers(files);
+        watchers_1.default.watchers(files);
     }
 }
 new Main();
