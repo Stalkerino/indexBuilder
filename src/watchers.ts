@@ -6,7 +6,6 @@ import {ClassClass} from "./types/classClass";
 import {EnumClass} from "./types/enumClass";
 import {TypeClass} from "./types/typeClass";
 import {ConstClass} from "./types/constClass";
-import {indexdts} from './index';
 
 export class Watchers {
 
@@ -86,14 +85,14 @@ export class Watchers {
   private _checkIfLineExist(line: string, type: string) {
     if (type === 'class') {
       return this._dtsFile.includes(line.replace('export ', 'export declare '));
+    } else if (type === 'const') {
+      return this._dtsFile.includes(line.replace('export const ', 'export declare const '));
     } else if (type === 'interface') {
       return this._dtsFile.includes(line);
     } else if (type === 'enum') {
       return this._dtsFile.includes(line.replace('export enum ', 'export declare enum '));
     } else if (type === 'type') {
       return this._dtsFile.includes(line.replace('export type ', 'export declare type '));
-    } else if (type === 'const') {
-      return this._dtsFile.includes(line.replace('export const ', 'export declare const '));
     }
   }
 

@@ -9,6 +9,11 @@ export class ClassClass {
     let finalFile: string = '';
     let bracketVerifier: number = 0;
     for (var i: number = index; i < ArrayFile.length; i++) {
+
+      if (ArrayFile[i].includes('extends ') && ArrayFile[i].includes('.')) {
+        ArrayFile[i] = ArrayFile[i].replace(ArrayFile[i].slice(ArrayFile[i].indexOf('extends ') + 8, ArrayFile[i].indexOf('.') + 1), '');
+      }
+
       if (ArrayFile[i].includes('export class')) { // If Class
         finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
       }
@@ -28,7 +33,8 @@ export class ClassClass {
       if (ArrayFile[i].includes('constructor')) { // If Constructor
         if (!ArrayFile[i].includes(('}')))
           bracketVerifier++;
-        finalFile += ArrayFile[i].substring(0, ArrayFile[i].length - 2) + ';\n';
+        finalFile += ArrayFile[i].substring(0, ArrayFile[i].length - (ArrayFile[i].length - ArrayFile[i].indexOf(')') - 1))
+          .replace('=', '').replace('{', '').replace('}', '') + ';\n';
       }
       if (ArrayFile[i].includes('(') && ArrayFile[i].includes('public')) { // If Public Function
         if (!ArrayFile[i].includes(')'))

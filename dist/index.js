@@ -27,18 +27,18 @@ class Main {
             output: process.stdout
         });
         this._glob = new glob.Glob(exports.path + "/**/**/*.ts", { ignore: exports.path + '/*.d.ts' }, (err, files) => {
-            this.files = files;
+            this._files = files;
         });
         rl.question('What do you want to do ? [1] - Watch for changements | [2] - Generate in one shot : ', (answer) => {
             switch (answer) {
                 case '1':
                     console.log('[Index Live Builder Active] - Waiting for file changements...');
-                    watchers_1.default.watchers(this.files);
+                    watchers_1.default.watchers(this._files);
                     break;
                 case '2':
                     console.log('[Index Live Builder Active] - Generating the file d.ts in one shot...');
                     fs.truncate('/home/stalk/Projets/Node/indexBuilder/test.ts', 0, function () { console.log('done'); });
-                    watchers_1.default.generator(this.files)
+                    watchers_1.default.generator(this._files)
                         .then(() => {
                         console.log('[Index Live Builder Active] - Done');
                         process.exit(0);

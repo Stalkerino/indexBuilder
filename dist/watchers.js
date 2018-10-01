@@ -87,6 +87,9 @@ class Watchers {
         if (type === 'class') {
             return this._dtsFile.includes(line.replace('export ', 'export declare '));
         }
+        else if (type === 'const') {
+            return this._dtsFile.includes(line.replace('export const ', 'export declare const '));
+        }
         else if (type === 'interface') {
             return this._dtsFile.includes(line);
         }
@@ -95,9 +98,6 @@ class Watchers {
         }
         else if (type === 'type') {
             return this._dtsFile.includes(line.replace('export type ', 'export declare type '));
-        }
-        else if (type === 'const') {
-            return this._dtsFile.includes(line.replace('export const ', 'export declare const '));
         }
     }
 }

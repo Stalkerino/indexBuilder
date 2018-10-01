@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 export interface HeadersLimitations {
   Limit: any
   Remaining: any
@@ -13,62 +15,8 @@ export declare class Client extends EventEmitter {
 }
 export declare type Encoder = (data: any) => Promise<string>;
 export declare type Decoder = (data: string) => Promise<any>;
-
-
-export declare const JsonEncoder: Encoder = (data: any): Promise<string> => {
-  return new Promise<string>((resolve) => {
-    resolve(JSON.stringify(data));
-  });
-};
-
-export declare const JsonDecoder: Decoder = (data: any): Promise<string> => {
-  return new Promise<any>((resolve, reject) => {
-    let result: any;
-
-    try {
-      result = JSON.parse(data);
-    } catch (err) {
-      return reject(err);
-    }
-export declare type Decoder = (data: string) => Promise<any>;
-
-
-export declare const JsonEncoder: Encoder = (data: any): Promise<string> => {
-  return new Promise<string>((resolve) => {
-    resolve(JSON.stringify(data));
-  });
-};
-
-export declare const JsonDecoder: Decoder = (data: any): Promise<string> => {
-  return new Promise<any>((resolve, reject) => {
-    let result: any;
-
-    try {
-      result = JSON.parse(data);
-    } catch (err) {
-      return reject(err);
-    }
 export declare type ContentType = string;
-
-export declare const
-  XML: ContentType = 'application/xml',
-  JSON: ContentType = 'application/json',
-  HTML: ContentType = 'text/html';
-
 export declare type Headers = { [name: string]: string };
-
-export declare interface RawMessage {
-  headers?: Headers
-  body?: any
-  uuid?: string
-}
-export declare type Headers = { [name: string]: string };
-
-export declare interface RawMessage {
-  headers?: Headers
-  body?: any
-  uuid?: string
-}
 export interface RawMessage {
   headers?: Headers
   body?: any
@@ -104,8 +52,15 @@ export declare class Response extends Message {
   public toLightString(): string;
 }
 export declare class NodeRequester implements Requester {
-  constructor() {;
+  constructor();
   public Request(req: Request): Promise<Response>;
+}
+export interface SigninParams {
+  client_id: string
+  client_secret: string
+  code: string
+  redirect_uri: string
+  grant_type: string
 }
 export interface Account extends Record {
   Account_Name?: string
@@ -219,13 +174,6 @@ export interface CrmContact extends Record {
   Domiciliation?: string
   IBAN?: string
 }
-export interface SigninParams {
-  client_id: string
-  client_secret: string
-  code: string
-  redirect_uri: string
-  grant_type: string
-}
 export declare enum UserType {
   AllUsers = 'AllUsers',
   ActiveUsers = 'ActiveUsers',
@@ -246,6 +194,12 @@ export interface ReadOneUserParams {
   scope: string
   userId: string
   type: UserType
+}
+export interface RefreshParams {
+  client_id: string
+  client_secret: string
+  refresh_token: string
+  grant_type: string
 }
 export declare enum CrmModuleName {
   Leads = 'Leads',
@@ -272,18 +226,16 @@ export declare enum CrmModuleName {
   Search = 'Search',
   Activities = 'Activities'
 }
-export interface RefreshParams {
-  client_id: string
-  client_secret: string
-  refresh_token: string
-  grant_type: string
-}
 export declare enum CrmMetaData {
   Modules = 'modules',
   Fields = 'fields',
   Layouts = 'layouts',
   RelatedLists = 'related_lists',
   CustomViews = 'custom_views'
+}
+export interface GetRecordParams {
+  module: CrmModuleName
+  id: string
 }
 export interface GetRecordsParams {
   module: CrmModuleName
@@ -296,19 +248,9 @@ export interface GetRecordsParams {
   per_page?: number
   cvid?: number
 }
-export interface GetRecordParams {
-  module: CrmModuleName
-  id: string
-}
 export interface InsertRecordsParams {
   module: CrmModuleName
   data?: any[]
-}
-export declare class CRM extends http.Client {
-//TODO: Add the var from the other class 
-  public token: string;
-  public refreshToken: string;
-  constructor(requester: http.Requester, config: CrmConfig);
 }
 export interface CrmConfig {
   url: string
@@ -318,6 +260,12 @@ export interface CrmConfig {
   clientSecret: string
   code: string
   redirectUri: string
+}
+export declare class CRM extends Client {
+//TODO: Add the var from the other class 
+  public token: string;
+  public refreshToken: string;
+  constructor(requester: http.Requester, config: CrmConfig);
 }
 export interface Lead extends Record {
   Last_Name?: string
@@ -390,7 +338,7 @@ export declare class Candidate extends RecruitRecord {
   public formatedResume?: string;
   public coverLetter?: string;
   public others?: string;
-  constructor(raw: any = {});
+  constructor(raw: any  );
 }
 export declare enum Qualification {
   None = '-None-',
@@ -464,7 +412,7 @@ export declare class ClientCompany extends RecruitRecord {
   public fax?: string;
   public about?: string;
   public website?: string;
-  constructor(raw: any = {});
+  constructor(raw: any  );
 }
 export declare enum Industry {
   None = '-None-',
@@ -479,6 +427,14 @@ export declare enum Industry {
   Immovable = 'Immobilier',
   Advice = 'Conseil',
   Health = 'Santé'
+}
+export declare enum ClientSource {
+  None = '-None-',
+  AddedByUser = 'Ajouté par l\'utilisateur',
+  API = 'API',
+  Imported = 'Importer',
+  Intern = 'Interne',
+  ImportedFromZohoCRM = 'Importé depuis Zoho CRM'
 }
 export declare class RecruitContact extends RecruitRecord {
 //TODO: Add the var from the other class 
@@ -506,20 +462,7 @@ export declare class RecruitContact extends RecruitRecord {
   public mailingAddress?: Address;
   public marque?: ContactMarque;
   public description?: string;
-  constructor(raw: any = {});
-}
-export declare enum ClientSource {
-  None = '-None-',
-  AddedByUser = 'Ajouté par l\'utilisateur',
-  API = 'API',
-  Imported = 'Importer',
-  Intern = 'Interne',
-  ImportedFromZohoCRM = 'Importé depuis Zoho CRM'
-}
-export declare enum ContactKind {
-  None = '-None-',
-  Company = 'Entreprise',
-  Consultant = 'Consultant'
+  constructor(raw: any  );
 }
 export declare enum ContactSource {
   None = '-None-',
@@ -542,6 +485,11 @@ export declare enum ContactSource {
   Twitter = 'Twitter',
   WebForm = 'Formulaire Web',
   ImportedFromZohoCRM = 'Importé depuis Zoho CRM'
+}
+export declare enum ContactKind {
+  None = '-None-',
+  Company = 'Entreprise',
+  Consultant = 'Consultant'
 }
 export declare enum ContactMarque {
   None = '-None-',
@@ -571,7 +519,7 @@ export declare class JobOpening extends RecruitRecord {
   public recruiter?: User;
   public isLocked?: boolean;
   public hasAttachment?: boolean;
-  constructor(raw: any = {});
+  constructor(raw: any  );
   public Populate(raw: XmlValue[]): void;
   public toXML(): any;
 }
@@ -613,9 +561,6 @@ export declare enum ProductFamily {
   AdministrativPortage = 'Portage administratif',
   Provigis = 'Provigis'
 }
-export interface Xmler {
-  toXML(): any
-}
 export interface Populater {
   Populate(): void
 }
@@ -624,6 +569,9 @@ export declare enum Salutation {
   Mr = 'Mr',
   Mme = 'Mme',
   Mlle = 'Mlle'
+}
+export interface Xmler {
+  toXML(): any
 }
 export declare abstract class RecruitRecord implements Xmler {
   public id: string;
@@ -634,7 +582,7 @@ export declare abstract class RecruitRecord implements Xmler {
   public createdAt: Date;
   public modifiedAt: Date;
   public lastActivityTime: Date;
-  constructor(raw: any = {});
+  constructor(raw: any  );
 }
 export interface User {
   id: string,
@@ -659,7 +607,7 @@ export interface Address {
   state?: string
   zipCode?: string
 }
-export declare class Recruit extends http.Client {
+export declare class Recruit extends Client {
 //TODO: Add the var from the other class 
   public module: any;
   constructor(requester: http.Requester, config: RecruitConfig);
@@ -790,8 +738,4 @@ export interface Config {
   crm: CrmConfig
   recruit: RecruitConfig
 }
-export declare class Zoho {
-  public crm: CRM;
-  public recruit: Recruit;
-  constructor(config: Config);
-}
+

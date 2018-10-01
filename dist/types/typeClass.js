@@ -16,11 +16,7 @@ class TypeClass {
     constructor() { }
     writeType(ArrayFile, index) {
         let finalFile = '';
-        for (var i = index; i < ArrayFile.length; i++) {
-            finalFile += ArrayFile[i].replace('export ', 'export declare ') + '\n';
-            if (ArrayFile[i].trim() === '}')
-                break;
-        }
+        finalFile += ArrayFile[index].replace('export ', 'export declare ') + '\n';
         // console.log(finalFile);
         fs.appendFile('/home/stalk/Projets/Node/indexBuilder/test.ts', finalFile, function (err) {
             if (err) {
