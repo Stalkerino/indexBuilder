@@ -1,4 +1,4 @@
-###Index Builder for TypeScript
+# Index Builder for TypeScript
 
 The idea is to code and don't bother about the creation of a TypeScript DTS File with node Watcher.
 You can let it watch any changements (Work in progress) or generate a DTS from all your files (minor tweaks need to be made)
